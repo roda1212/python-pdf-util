@@ -15,6 +15,8 @@ class Mode(Enum):
     CheckPassword = 'CheckPassword'
     SetPageLayout = 'SetPageLayout'
     SetPageMode = 'SetPageMode'
+    GetMetaData = 'GetMetaData'
+    SetMetaData = 'SetMetaData'
     @classmethod
     def toMode(cls, val:str):
         try:
@@ -37,6 +39,12 @@ def InitArgParser(mode:Mode) -> argparse.ArgumentParser:
         parser.add_argument('page_layout', type=Prop.PageLayout, help=f"ページレイアウト（{Prop.PageLayout.members()}）")
     elif mode == Mode.SetPageMode:
         parser.add_argument('page_mode', type=Prop.PageMode, help=f"ページモード（{Prop.PageMode.members()}）")
+    elif mode == Mode.GetMetaData:
+        parser.add_argument('name', type=str, help=f"取得する情報（{Prop.MetaData.members()}, 他）")
+    elif mode == Mode.SetMetaData:
+        parser.add_argument('name', type=str, help=f"設定する情報（{Prop.MetaData.members()}, 他）")
+        parser.add_argument('-v', '--value', type=str, help=f"設定する値", default='')
+        parser.add_argument('-d', '--delete', action='store_true', help=f"削除フラグ")
     return parser
 
 def Process(mode, args):
@@ -51,6 +59,10 @@ def Process(mode, args):
         Processor.SetPageLayout(args.pdf_file, args.page_layout.value)
     elif mode == Mode.SetPageMode:
         Processor.SetPageMode(args.pdf_file, args.page_mode.value)
+    elif mode == Mode.GetMetaData:
+        Processor.GetMetaData(args.pdf_file, args.name)
+    elif mode == Mode.SetMetaData:
+        Processor.SetMetaData(args.pdf_file, args.name, args.value, args.delete)
 
 def Main():
     mode = Mode.toMode(sys.argv[1])
