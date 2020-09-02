@@ -1,4 +1,5 @@
 import sys
+from enum import Enum
 
 import PyPDF2
 
@@ -28,3 +29,21 @@ def CheckPassword(pdf_file:str, password:str) -> int:
     else:
         Log.Error('not encrypted')
     return 1
+
+def SetPageLayout(pdf_file:str, page_layout:str) -> int:
+    reader = PyPDF2.PdfFileReader(pdf_file, strict=False)
+    writer = PyPDF2.PdfFileWriter()
+    writer.cloneReaderDocumentRoot(reader)
+    writer.setPageLayout(page_layout)
+    with open('out.pdf', 'wb') as f:
+        writer.write(f)
+    return 0
+
+def SetPageMode(pdf_file:str, page_mode:str) -> int:
+    reader = PyPDF2.PdfFileReader(pdf_file, strict=False)
+    writer = PyPDF2.PdfFileWriter()
+    writer.cloneReaderDocumentRoot(reader)
+    writer.setPageMode(page_mode)
+    with open('out.pdf', 'wb') as f:
+        writer.write(f)
+    return 0

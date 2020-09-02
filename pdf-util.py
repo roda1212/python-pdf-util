@@ -5,6 +5,7 @@ import sys
 
 import src.Log as Log
 import src.Processor as Processor
+import src.Prop as Prop
 
 class Mode(Enum):
     """
@@ -12,6 +13,8 @@ class Mode(Enum):
     """
     SetPassword = 'SetPassword'
     CheckPassword = 'CheckPassword'
+    SetPageLayout = 'SetPageLayout'
+    SetPageMode = 'SetPageMode'
     @classmethod
     def toMode(cls, val:str):
         try:
@@ -30,14 +33,24 @@ def InitArgParser(mode:Mode) -> argparse.ArgumentParser:
         parser.add_argument('password', type=str, help='パスワード')
     elif mode == Mode.CheckPassword:
         parser.add_argument('password', type=str, help='パスワード')
+    elif mode == Mode.SetPageLayout:
+        parser.add_argument('page_layout', type=Prop.PageLayout, help=f"ページレイアウト（{Prop.PageLayout.members()}）")
+    elif mode == Mode.SetPageMode:
+        parser.add_argument('page_mode', type=Prop.PageMode, help=f"ページモード（{Prop.PageMode.members()}）")
     return parser
 
 def Process(mode, args):
+    """
+    モードに応じた処理の実行
+    """
     if mode == Mode.SetPassword:
         Processor.SetPassword(args.pdf_file, args.password)
     elif mode == Mode.CheckPassword:
         Processor.CheckPassword(args.pdf_file, args.password)
-
+    elif mode == Mode.SetPageLayout:
+        Processor.SetPageLayout(args.pdf_file, args.page_layout.value)
+    elif mode == Mode.SetPageMode:
+        Processor.SetPageMode(args.pdf_file, args.page_mode.value)
 
 def Main():
     mode = Mode.toMode(sys.argv[1])
